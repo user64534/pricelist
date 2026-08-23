@@ -244,11 +244,12 @@
 
 <script>
 const GRAINS = [
-  {name:"Turmeric Powder", lot:"KS-TU-114", cert:"Lab OK", stock:42, retail:6.50, sack:52.00},
-  {name:"Smoked Paprika", lot:"KS-PA-098", cert:"Lab OK", stock:8, retail:7.20, sack:58.00},
-  {name:"Ground Cumin", lot:"KS-CU-201", cert:"Lab OK", stock:0, retail:5.90, sack:47.00},
-  {name:"Ceylon Cinnamon", lot:"KS-CI-330", cert:"Lab OK", stock:19, retail:9.10, sack:74.00},
-  {name:"Black Peppercorn (ground)", lot:"KS-BP-042", cert:"Lab OK", stock:65, retail:6.80, sack:55.00},
+  {name:"Retatutride 30mg", lot:"KS-TU-114", cert:"Lab OK", stock:42, retail:80, sack:52.00},
+  {name:"Retatutride 50mg", lot:"KS-PA-098", cert:"Lab OK", stock:8, retail:130, sack:58.00},
+  {name:"GHKCU 100mg", lot:"KS-CU-201", cert:"Lab OK", stock:0, retail:40, sack:47.00},
+  {name:"KLOW", lot:"KS-CI-330", cert:"Lab OK", stock:19, retail:9.10, sack:74.00},
+  {name:"HGH 24iu", lot:"KS-BP-042", cert:"Lab OK", stock:65, retail:6.80, sack:55.00},
+  {name:"HGH 36iu", lot:"KS-BP-042", cert:"Lab OK", stock:65, retail:6.80, sack:55.00},
 ];
 const SHIPPING = 12.00;
 let cart = []; // {key, name, unitLabel, qty, unitPrice, category}
@@ -264,7 +265,7 @@ function renderGrains(){
       <td class="price">${fmt(g.retail)}</td>
       <td>
         <div class="qtybox">
-          <input type="number" min="0" max="5" value="1" id="qty-grain-${i}" ${outOfStock?'disabled':''}>
+          <input type="number" min="0" value="1" id="qty-grain-${i}" ${outOfStock?'disabled':''}>
           <button class="addbtn" ${outOfStock?'disabled':''} onclick="addGrain(${i})">Add</button>
         </div>
       </td>
@@ -274,7 +275,7 @@ function renderGrains(){
 
 function addGrain(i){
   const qtyInput = document.getElementById(`qty-grain-${i}`);
-  const qty = Math.max(0, Math.min(5, parseInt(qtyInput.value)||0));
+  const qty = Math.max(0, parseInt(qtyInput.value)||0);
   if(qty <= 0) return;
   const g = GRAINS[i];
   const key = 'grain-' + i;
