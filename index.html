@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kettle & Sack — Bulk Pantry Supply</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --parchment:#EFE9DE;
+    --card:#FBF7EE;
+    --ink:#2B2620;
+    --ink-soft:#5A5347;
+    --mustard:#8A6F3D;
+    --olive:#5C6B4D;
+    --paprika:#C1502E;
+    --line: rgba(43,38,32,0.16);
+    --stamp: #7A3B2E;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--parchment);
+    background-image:
+      radial-gradient(circle at 1px 1px, rgba(43,38,32,0.06) 1px, transparent 0);
+    background-size: 14px 14px;
+    color:var(--ink);
+    font-family:'Inter', sans-serif;
+    line-height:1.5;
+    padding-bottom:60px;
+  }
+  .wrap{max-width:1040px; margin:0 auto; padding:0 20px;}
+
+  header.top{
+    padding:44px 0 28px;
+    border-bottom:2px solid var(--ink);
+    margin-bottom:28px;
+  }
+  .brandrow{display:flex; align-items:flex-end; justify-content:space-between; gap:20px; flex-wrap:wrap;}
+  h1{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-size:2.6rem;
+    letter-spacing:-0.01em;
+    margin:0 0 6px;
+  }
+  .tagline{color:var(--ink-soft); font-size:0.98rem; max-width:460px;}
+  .stamp{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.72rem;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    color:var(--stamp);
+    border:2px solid var(--stamp);
+    border-radius:3px;
+    padding:8px 12px;
+    transform:rotate(-4deg);
+    white-space:nowrap;
+    opacity:0.85;
+  }
+
+  .notice{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-left:4px solid var(--olive);
+    border-radius:4px;
+    padding:18px 20px;
+    margin-bottom:20px;
+    font-size:0.94rem;
+  }
+  .notice b{font-family:'Fraunces', serif; font-weight:600;}
+  .notice .flag{color:var(--paprika); font-weight:600;}
+
+  .discount-strip{
+    display:flex; gap:10px; flex-wrap:wrap;
+    align-items:center;
+    background:var(--card);
+    border:1px dashed var(--mustard);
+    border-radius:4px;
+    padding:14px 18px;
+    margin-bottom:36px;
+    font-size:0.9rem;
+  }
+  .discount-strip .label{font-family:'Fraunces', serif; font-weight:600; margin-right:6px;}
+  .pill{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.78rem;
+    background:var(--mustard);
+    color:#fff;
+    padding:3px 9px;
+    border-radius:20px;
+  }
+  .discount-note{width:100%; color:var(--ink-soft); font-size:0.8rem; margin-top:4px;}
+
+  section.catalog{margin-bottom:44px;}
+  .cat-head{display:flex; align-items:baseline; justify-content:space-between; gap:12px; margin-bottom:6px; flex-wrap:wrap;}
+  h2{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-size:1.35rem;
+    margin:0;
+    display:flex; align-items:center; gap:10px;
+  }
+  h2 .num{color:var(--mustard); font-family:'IBM Plex Mono', monospace; font-size:0.9rem;}
+  .cat-sub{color:var(--ink-soft); font-size:0.85rem; max-width:520px; margin:0 0 14px;}
+
+  table{width:100%; border-collapse:collapse; font-size:0.9rem;}
+  thead th{
+    text-align:left;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.7rem;
+    text-transform:uppercase;
+    letter-spacing:0.08em;
+    color:var(--ink-soft);
+    padding:8px 10px;
+    border-bottom:1.5px solid var(--ink);
+  }
+  tbody tr{border-bottom:1px dotted var(--line);}
+  tbody tr:hover{background:rgba(138,111,61,0.06);}
+  tbody td{padding:12px 10px; vertical-align:middle;}
+  .pname{font-weight:600;}
+  .plot{font-family:'IBM Plex Mono', monospace; font-size:0.78rem; color:var(--ink-soft);}
+  .cert{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.72rem;
+    color:var(--olive);
+    border:1px solid var(--olive);
+    padding:2px 6px;
+    border-radius:3px;
+  }
+  .stock{font-family:'IBM Plex Mono', monospace; font-size:0.82rem;}
+  .stock.low{color:var(--paprika);}
+  .price{font-family:'IBM Plex Mono', monospace; font-weight:600;}
+  .qtybox{display:flex; align-items:center; gap:6px;}
+  .qtybox input{
+    width:52px; padding:6px; border:1px solid var(--line); border-radius:3px;
+    font-family:'IBM Plex Mono', monospace; text-align:center; background:#fff;
+  }
+  .addbtn{
+    background:var(--ink); color:#fff; border:none; border-radius:3px;
+    padding:8px 14px; font-family:'Inter'; font-weight:600; font-size:0.82rem;
+    cursor:pointer;
+  }
+  .addbtn:hover{background:var(--paprika);}
+  .oil-name{display:flex; align-items:center; gap:10px;}
+  .oil-logo{
+    width:30px; height:30px; border-radius:50%;
+    background:var(--olive); color:#fff; display:flex; align-items:center; justify-content:center;
+    font-family:'Fraunces', serif; font-size:0.85rem; font-weight:600;
+  }
+
+  /* selection panel */
+  .cart{
+    position:sticky; bottom:16px;
+    background:var(--ink); color:var(--parchment);
+    border-radius:8px; padding:20px 24px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.25);
+  }
+  .cart h2{color:var(--parchment); font-size:1.1rem;}
+  .cart-empty{color:#c8c1b3; font-size:0.88rem; padding:8px 0;}
+  .cart-item{
+    display:flex; justify-content:space-between; align-items:center;
+    font-size:0.88rem; padding:7px 0; border-bottom:1px dotted rgba(255,255,255,0.15);
+  }
+  .cart-item .rm{color:#e7a394; cursor:pointer; font-family:'IBM Plex Mono', monospace; font-size:0.78rem;}
+  .totals{margin-top:14px; font-size:0.9rem;}
+  .totals .row{display:flex; justify-content:space-between; padding:3px 0;}
+  .totals .grand{font-family:'Fraunces', serif; font-size:1.2rem; font-weight:600; border-top:1px solid rgba(255,255,255,0.2); margin-top:8px; padding-top:8px;}
+  .minnote{font-size:0.78rem; color:#c8c1b3; margin-top:6px;}
+  .placeorder{
+    width:100%; margin-top:14px; padding:13px; border:none; border-radius:5px;
+    background:var(--paprika); color:#fff; font-family:'Fraunces', serif; font-weight:600; font-size:1rem;
+    cursor:pointer;
+  }
+  .placeorder:disabled{background:#6b6357; cursor:not-allowed;}
+
+  /* modal */
+  .overlay{
+    display:none; position:fixed; inset:0; background:rgba(20,17,13,0.6);
+    align-items:center; justify-content:center; z-index:50; padding:20px;
+  }
+  .overlay.open{display:flex;}
+  .modal{
+    background:var(--card); border-radius:8px; max-width:480px; width:100%;
+    padding:28px; max-height:88vh; overflow-y:auto;
+  }
+  .modal h3{font-family:'Fraunces', serif; margin:0 0 4px; font-size:1.3rem;}
+  .modal .close{float:right; cursor:pointer; font-size:1.3rem; color:var(--ink-soft); line-height:1;}
+  .modal label{display:block; font-size:0.8rem; font-weight:600; margin:14px 0 4px;}
+  .modal input, .modal select{
+    width:100%; padding:9px 10px; border:1px solid var(--line); border-radius:4px;
+    font-family:'Inter'; font-size:0.9rem; background:#fff;
+  }
+  .modal .small{font-size:0.75rem; color:var(--ink-soft); margin-top:4px;}
+  .network-opts{display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:6px;}
+  .network-opts label{
+    display:flex; align-items:center; gap:6px; border:1px solid var(--line); border-radius:4px;
+    padding:8px 10px; font-weight:500; font-size:0.85rem; margin:0; cursor:pointer;
+  }
+  .network-opts input{width:auto;}
+  .summary-box{
+    background:#fff; border:1px solid var(--line); border-radius:4px; padding:12px;
+    font-family:'IBM Plex Mono', monospace; font-size:0.78rem; white-space:pre-wrap;
+    margin-top:14px; max-height:140px; overflow-y:auto;
+  }
+  .modal-actions{display:flex; gap:10px; margin-top:16px;}
+  .modal-actions button{
+    flex:1; padding:11px; border-radius:5px; border:none; font-weight:600; cursor:pointer; font-family:'Inter';
+  }
+  .btn-copy{background:var(--mustard); color:#fff;}
+  .btn-mail{background:var(--ink); color:#fff;}
+  .toast{
+    position:fixed; bottom:20px; left:50%; transform:translateX(-50%);
+    background:var(--olive); color:#fff; padding:10px 18px; border-radius:5px;
+    font-size:0.85rem; opacity:0; transition:opacity 0.3s; pointer-events:none; z-index:60;
+  }
+  .toast.show{opacity:1;}
+  footer{text-align:center; color:var(--ink-soft); font-size:0.78rem; margin-top:50px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <div class="brandrow">
+      <div>
+        <h1>Kettle &amp; Sack</h1>
+        <div class="tagline">Bulk pantry staples, sourced direct and parcelled to order. Small retail bags in stock now; large sacks made to order.</div>
+      </div>
+      <div class="stamp">manifest no. 0417</div>
+    </div>
+  </header>
+
+  <div class="notice">
+    <b>How Pre-order works —</b> Retail bags ship from stock on hand. For Sack (1&nbsp;KG) quantities we buy direct from the growers first: orders placed Monday go out for sourcing that week and are parcelled within 5–7 days.
+    <br><span class="flag">Retail stock can run out — Pre-order sacks are always available.</span>
+  </div>
+
+  <div class="discount-strip">
+    <span class="label">Bulk Retail Discount (same item):</span>
+    <span class="pill">200g -5%</span>
+    <span class="pill">300g -10%</span>
+    <span class="pill">400g -15%</span>
+    <span class="pill">500g -20%</span>
+    <div class="discount-note">Applied automatically in your selection, capped at 500g per item. Need more? Order by the Sack instead.</div>
+  </div>
+
+  <section class="catalog">
+    <div class="cat-head">
+      <h2><span class="num">01</span> Bulk Grains &amp; Spices</h2>
+    </div>
+    <p class="cat-sub">Sold by the 100g retail bag, or pre-order by the 1KG sack.</p>
+    <table>
+      <thead>
+        <tr><th>Item</th><th>Lot No.</th><th>Cert.</th><th>Stock (100g)</th><th>Retail (100g)</th><th>Sack Pre-order (1kg)</th><th></th></tr>
+      </thead>
+      <tbody id="grainsBody"></tbody>
+    </table>
+  </section>
+
+  <section class="catalog">
+    <div class="cat-head">
+      <h2><span class="num">02</span> Specialty Extras</h2>
+    </div>
+    <p class="cat-sub">Unlock up to 10g of extras for every 100g of grains &amp; spices in your selection (e.g. 300g of Turmeric unlocks up to 30g of Saffron, Vanilla Bean, etc).</p>
+    <table>
+      <thead>
+        <tr><th>Item</th><th>Lot No.</th><th>Cert.</th><th>Stock (10g)</th><th>Retail (10g)</th><th></th></tr>
+      </thead>
+      <tbody id="extrasBody"></tbody>
+    </table>
+  </section>
+
+  <section class="catalog">
+    <div class="cat-head">
+      <h2><span class="num">03</span> Bottled Oils</h2>
+    </div>
+    <p class="cat-sub">⚠️ Bottles are 250ml, not 100ml — priced per bottle below, with the per-100ml rate shown for comparison.</p>
+    <table>
+      <thead>
+        <tr><th>Item</th><th>Lot No.</th><th>Cert.</th><th>Stock (250ml)</th><th>Price (250ml)</th><th>Per 100ml</th><th></th></tr>
+      </thead>
+      <tbody id="oilsBody"></tbody>
+    </table>
+  </section>
+
+  <section class="cart">
+    <h2>Your Selection</h2>
+    <div id="cartItems"><div class="cart-empty">No items selected yet</div></div>
+    <div class="totals">
+      <div class="row"><span>Subtotal</span><span id="subtotal">$0.00</span></div>
+      <div class="row"><span>Shipping</span><span id="shipping">$12.00</span></div>
+      <div class="row grand"><span>Grand Total</span><span id="grandtotal">$0.00</span></div>
+    </div>
+    <div class="minnote">Minimum order of $150 (before shipping) required to check out.</div>
+    <button class="placeorder" id="placeOrderBtn" disabled>Place Order</button>
+  </section>
+
+  <footer>Kettle &amp; Sack — small-batch sourcing, honestly labelled.</footer>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <span class="close" id="closeModal">&times;</span>
+    <h3>Complete Your Order</h3>
+    <div class="small">Send your order to <b>orders@kettleandsack.example</b></div>
+
+    <label>Name</label>
+    <input type="text" id="ordName" placeholder="Full name">
+    <label>Shipping Address</label>
+    <input type="text" id="ordAddress" placeholder="Street, city, postal code">
+    <div class="small">* Enter your real name and address — parcels can't be redelivered.</div>
+
+    <label>Pay with</label>
+    <div class="network-opts">
+      <label><input type="radio" name="network" value="USDT (TRC20)" checked> USDT · TRC20</label>
+      <label><input type="radio" name="network" value="USDT (ERC20)"> USDT · ERC20</label>
+      <label><input type="radio" name="network" value="BTC"> BTC</label>
+      <label><input type="radio" name="network" value="Other (ask)"> Other</label>
+    </div>
+    <div class="small">A payment address will be sent to you within 12 hours of your order.</div>
+
+    <label>Order Summary</label>
+    <div class="summary-box" id="orderSummary"></div>
+
+    <div class="modal-actions">
+      <button class="btn-copy" id="copyDetails">Copy Order Details</button>
+      <button class="btn-mail" id="mailOrder">Open Email</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const GRAINS = [
+  {name:"Turmeric Powder", lot:"KS-TU-114", cert:"Lab OK", stock:42, retail:6.50, sack:52.00},
+  {name:"Smoked Paprika", lot:"KS-PA-098", cert:"Lab OK", stock:8, retail:7.20, sack:58.00},
+  {name:"Ground Cumin", lot:"KS-CU-201", cert:"Lab OK", stock:0, retail:5.90, sack:47.00},
+  {name:"Ceylon Cinnamon", lot:"KS-CI-330", cert:"Lab OK", stock:19, retail:9.10, sack:74.00},
+  {name:"Black Peppercorn (ground)", lot:"KS-BP-042", cert:"Lab OK", stock:65, retail:6.80, sack:55.00},
+];
+const EXTRAS = [
+  {name:"Saffron Threads", lot:"KS-SA-007", cert:"Lab OK", stock:14, retail:18.00},
+  {name:"Vanilla Bean (Madagascar)", lot:"KS-VB-055", cert:"Lab OK", stock:22, retail:12.50},
+  {name:"Pink Peppercorn", lot:"KS-PP-019", cert:"Lab OK", stock:30, retail:8.40},
+];
+const OILS = [
+  {name:"Cold-Pressed Sesame Oil", lot:"KS-OS-410", cert:"Lab OK", stock:26, price:14.00, mark:"S"},
+  {name:"Extra Virgin Olive Oil", lot:"KS-OO-120", cert:"Lab OK", stock:11, price:16.50, mark:"O"},
+  {name:"Toasted Mustard Oil", lot:"KS-OM-233", cert:"Lab OK", stock:3, price:13.00, mark:"M"},
+];
+
+const SHIPPING = 12.00;
+const MIN_ORDER = 150;
+let cart = []; // {key, name, unitLabel, qty, unitPrice, category}
+
+function fmt(n){ return "$" + n.toFixed(2); }
+
+function bulkMultiplier(qtyBags){
+  // qtyBags in units of 100g bags; discount tiers at 200/300/400/500g total for same item
+  const grams = qtyBags * 100;
+  if(grams >= 500) return 0.80;
+  if(grams >= 400) return 0.85;
+  if(grams >= 300) return 0.90;
+  if(grams >= 200) return 0.95;
+  return 1.0;
+}
+
+function renderGrains(){
+  const body = document.getElementById('grainsBody');
+  body.innerHTML = GRAINS.map((g, i) => {
+    const outOfStock = g.stock <= 0;
+    return `<tr>
+      <td class="pname">${g.name}</td>
+      <td class="plot">${g.lot}</td>
+      <td><span class="cert">${g.cert}</span></td>
+      <td class="stock ${g.stock < 15 && !outOfStock ? 'low':''}">${outOfStock ? 'Out of stock' : g.stock + ' bags'}</td>
+      <td class="price">${fmt(g.retail)}</td>
+      <td class="price">${fmt(g.sack)} /kg</td>
+      <td>
+        <div class="qtybox">
+          <input type="number" min="0" max="5" value="1" id="qty-grain-${i}" ${outOfStock?'disabled':''}>
+          <button class="addbtn" ${outOfStock?'disabled':''} onclick="addGrain(${i})">Add</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function renderExtras(){
+  const body = document.getElementById('extrasBody');
+  body.innerHTML = EXTRAS.map((e, i) => `<tr>
+      <td class="pname">${e.name}</td>
+      <td class="plot">${e.lot}</td>
+      <td><span class="cert">${e.cert}</span></td>
+      <td class="stock">${e.stock} units</td>
+      <td class="price">${fmt(e.retail)}</td>
+      <td>
+        <div class="qtybox">
+          <input type="number" min="0" max="10" value="1" id="qty-extra-${i}">
+          <button class="addbtn" onclick="addExtra(${i})">Add</button>
+        </div>
+      </td>
+    </tr>`).join('');
+}
+
+function renderOils(){
+  const body = document.getElementById('oilsBody');
+  body.innerHTML = OILS.map((o, i) => `<tr>
+      <td><div class="oil-name"><div class="oil-logo">${o.mark}</div>${o.name}</div></td>
+      <td class="plot">${o.lot}</td>
+      <td><span class="cert">${o.cert}</span></td>
+      <td class="stock">${o.stock} bottles</td>
+      <td class="price">${fmt(o.price)}</td>
+      <td class="price">${fmt(o.price/2.5)}</td>
+      <td>
+        <div class="qtybox">
+          <input type="number" min="0" max="10" value="1" id="qty-oil-${i}">
+          <button class="addbtn" onclick="addOil(${i})">Add</button>
+        </div>
+      </td>
+    </tr>`).join('');
+}
+
+function grainBagsInCart(){
+  return cart.filter(c => c.category === 'grain').reduce((s,c) => s + c.qty, 0);
+}
+
+function addGrain(i){
+  const qtyInput = document.getElementById(`qty-grain-${i}`);
+  const qty = Math.max(0, Math.min(5, parseInt(qtyInput.value)||0));
+  if(qty <= 0) return;
+  const g = GRAINS[i];
+  const key = 'grain-' + i;
+  const existing = cart.find(c => c.key === key);
+  if(existing){ existing.qty += qty; } else {
+    cart.push({key, name:g.name, unitLabel:'100g bag', qty, unitPrice:g.retail, category:'grain'});
+  }
+  renderCart();
+}
+function addExtra(i){
+  const qtyInput = document.getElementById(`qty-extra-${i}`);
+  const qty = Math.max(0, Math.min(10, parseInt(qtyInput.value)||0));
+  if(qty <= 0) return;
+  const extraGramsRequested = (extrasGramsInCart() + qty*10);
+  const allowed = grainBagsInCart() * 10; // 10g extras per 100g grain bag
+  if(extraGramsRequested > allowed){
+    showToast(`Add more grains & spices first — extras are capped at 10g per 100g purchased.`);
+    return;
+  }
+  const e = EXTRAS[i];
+  const key = 'extra-' + i;
+  const existing = cart.find(c => c.key === key);
+  if(existing){ existing.qty += qty; } else {
+    cart.push({key, name:e.name, unitLabel:'10g unit', qty, unitPrice:e.retail, category:'extra'});
+  }
+  renderCart();
+}
+function extrasGramsInCart(){
+  return cart.filter(c => c.category === 'extra').reduce((s,c) => s + c.qty*10, 0);
+}
+function addOil(i){
+  const qtyInput = document.getElementById(`qty-oil-${i}`);
+  const qty = Math.max(0, Math.min(10, parseInt(qtyInput.value)||0));
+  if(qty <= 0) return;
+  const o = OILS[i];
+  const key = 'oil-' + i;
+  const existing = cart.find(c => c.key === key);
+  if(existing){ existing.qty += qty; } else {
+    cart.push({key, name:o.name, unitLabel:'250ml bottle', qty, unitPrice:o.price, category:'oil'});
+  }
+  renderCart();
+}
+
+function removeItem(key){
+  cart = cart.filter(c => c.key !== key);
+  renderCart();
+}
+
+function renderCart(){
+  const container = document.getElementById('cartItems');
+  if(cart.length === 0){
+    container.innerHTML = '<div class="cart-empty">No items selected yet</div>';
+  } else {
+    container.innerHTML = cart.map(c => {
+      let lineTotal;
+      if(c.category === 'grain'){
+        lineTotal = c.qty * c.unitPrice * bulkMultiplier(c.qty);
+      } else {
+        lineTotal = c.qty * c.unitPrice;
+      }
+      return `<div class="cart-item">
+        <span>${c.qty} × ${c.name} (${c.unitLabel})</span>
+        <span>${fmt(lineTotal)} <span class="rm" onclick="removeItem('${c.key}')">remove</span></span>
+      </div>`;
+    }).join('');
+  }
+
+  let subtotal = 0;
+  cart.forEach(c => {
+    if(c.category === 'grain'){
+      subtotal += c.qty * c.unitPrice * bulkMultiplier(c.qty);
+    } else {
+      subtotal += c.qty * c.unitPrice;
+    }
+  });
+  const grand = subtotal > 0 ? subtotal + SHIPPING : 0;
+  document.getElementById('subtotal').textContent = fmt(subtotal);
+  document.getElementById('shipping').textContent = subtotal > 0 ? fmt(SHIPPING) : '$0.00';
+  document.getElementById('grandtotal').textContent = fmt(grand);
+
+  const btn = document.getElementById('placeOrderBtn');
+  btn.disabled = subtotal < MIN_ORDER;
+  btn.textContent = subtotal < MIN_ORDER && subtotal > 0
+    ? `Add ${fmt(MIN_ORDER - subtotal)} more to order`
+    : 'Place Order';
+}
+
+function buildSummary(){
+  const name = document.getElementById('ordName').value || '(name not entered)';
+  const address = document.getElementById('ordAddress').value || '(address not entered)';
+  const network = document.querySelector('input[name="network"]:checked').value;
+  let lines = [`Kettle & Sack — Order Summary`, `Name: ${name}`, `Address: ${address}`, `Pay via: ${network}`, ``];
+  cart.forEach(c => {
+    let lineTotal = c.category === 'grain' ? c.qty*c.unitPrice*bulkMultiplier(c.qty) : c.qty*c.unitPrice;
+    lines.push(`${c.qty} x ${c.name} (${c.unitLabel}) — ${fmt(lineTotal)}`);
+  });
+  const subtotal = cart.reduce((s,c) => s + (c.category==='grain' ? c.qty*c.unitPrice*bulkMultiplier(c.qty) : c.qty*c.unitPrice), 0);
+  lines.push('', `Subtotal: ${fmt(subtotal)}`, `Shipping: ${fmt(SHIPPING)}`, `Total: ${fmt(subtotal+SHIPPING)}`);
+  return lines.join('\n');
+}
+
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2600);
+}
+
+document.getElementById('placeOrderBtn').addEventListener('click', () => {
+  document.getElementById('orderSummary').textContent = buildSummary();
+  document.getElementById('overlay').classList.add('open');
+});
+document.getElementById('closeModal').addEventListener('click', () => {
+  document.getElementById('overlay').classList.remove('open');
+});
+document.querySelectorAll('input[name="network"], #ordName, #ordAddress').forEach(el => {
+  el.addEventListener('input', () => {
+    document.getElementById('orderSummary').textContent = buildSummary();
+  });
+});
+document.getElementById('copyDetails').addEventListener('click', () => {
+  const text = buildSummary();
+  navigator.clipboard.writeText(text).then(() => showToast('Order details copied'));
+});
+document.getElementById('mailOrder').addEventListener('click', () => {
+  const body = encodeURIComponent(buildSummary());
+  window.location.href = `mailto:orders@kettleandsack.example?subject=New Order&body=${body}`;
+});
+
+renderGrains();
+renderExtras();
+renderOils();
+renderCart();
+</script>
+</body>
+</html>
