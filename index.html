@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Kettle & Sack — Bulk Pantry Supply</title>
+<title>DIVINITIES — Bulk Pantry Supply</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -180,8 +180,8 @@
   <header class="top">
     <div class="brandrow">
       <div>
-        <h1>Kettle &amp; Sack</h1>
-        <div class="tagline">Bulk pantry staples, sourced direct and parcelled to order. Small retail bags in stock now; large sacks made to order.</div>
+        <h1>DIVINITIES</h1>
+        <div class="tagline">Peptides and other goods</div>
       </div>
       <div class="stamp">manifest no. 0417</div>
     </div>
@@ -210,14 +210,14 @@
     <button class="placeorder" id="placeOrderBtn" disabled>Place Order</button>
   </section>
 
-  <footer>Kettle &amp; Sack — small-batch sourcing, honestly labelled.</footer>
+  <footer>DIVINITIES — small-batch sourcing, honestly labelled.</footer>
 </div>
 
 <div class="overlay" id="overlay">
   <div class="modal">
     <span class="close" id="closeModal">&times;</span>
     <h3>Complete Your Order</h3>
-    <div class="small">Send your order to <b>orders@kettleandsack.example</b></div>
+    <div class="small">Send your order to <b>orders@divinities.example</b></div>
 
     <label>Name</label>
     <input type="text" id="ordName" placeholder="Full name">
@@ -326,7 +326,7 @@ function buildSummary(){
   const name = document.getElementById('ordName').value || '(name not entered)';
   const address = document.getElementById('ordAddress').value || '(address not entered)';
   const network = document.querySelector('input[name="network"]:checked').value;
-  let lines = [`Kettle & Sack — Order Summary`, `Name: ${name}`, `Address: ${address}`, `Pay via: ${network}`, ``];
+  let lines = [`DIVINITIES — Order Summary`, `Name: ${name}`, `Address: ${address}`, `Pay via: ${network}`, ``];
   cart.forEach(c => {
     const lineTotal = c.qty * c.unitPrice;
     lines.push(`${c.qty} x ${c.name} (${c.unitLabel}) — ${fmt(lineTotal)}`);
@@ -361,7 +361,7 @@ document.getElementById('copyDetails').addEventListener('click', () => {
 });
 document.getElementById('mailOrder').addEventListener('click', () => {
   const body = encodeURIComponent(buildSummary());
-  window.location.href = `mailto:orders@kettleandsack.example?subject=New Order&body=${body}`;
+  window.location.href = `mailto:orders@divinities.example?subject=New Order&body=${body}`;
 });
 
 renderGrains();
