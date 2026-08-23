@@ -132,14 +132,14 @@ function renderTable(items, bodyId, keyPrefix){
   }).join('');
 }
 
-function renderSpices(){ renderTable(SPICES, 'spicesBody', 'spice'); }
+function renderSpices(){ renderTable(OILS, 'spicesBody', 'spice'); }
 function renderSupplies(){ renderTable(SUPPLIES, 'suppliesBody', 'supply'); }
 
 function addItem(keyPrefix, i){
   const qtyInput = document.getElementById(`qty-${keyPrefix}-${i}`);
   const qty = Math.max(0, parseInt(qtyInput.value)||0);
   if(qty <= 0) return;
-  const source = keyPrefix === 'spice' ? SPICES : SUPPLIES;
+  const source = keyPrefix === 'spice' ? OILS : SUPPLIES;
   const it = source[i];
   const key = keyPrefix + '-' + i;
   const existing = cart.find(c => c.key === key);
