@@ -60,18 +60,6 @@
     opacity:0.85;
   }
 
-  .notice{
-    background:var(--card);
-    border:1px solid var(--line);
-    border-left:4px solid var(--olive);
-    border-radius:4px;
-    padding:18px 20px;
-    margin-bottom:20px;
-    font-size:0.94rem;
-  }
-  .notice b{font-family:'Fraunces', serif; font-weight:600;}
-  .notice .flag{color:var(--paprika); font-weight:600;}
-
   section.catalog{margin-bottom:44px;}
   .cat-head{display:flex; align-items:baseline; justify-content:space-between; gap:12px; margin-bottom:6px; flex-wrap:wrap;}
   h2{
@@ -113,12 +101,6 @@
     cursor:pointer;
   }
   .addbtn:hover{background:var(--paprika);}
-  .oil-name{display:flex; align-items:center; gap:10px;}
-  .oil-logo{
-    width:30px; height:30px; border-radius:50%;
-    background:var(--olive); color:#fff; display:flex; align-items:center; justify-content:center;
-    font-family:'Fraunces', serif; font-size:0.85rem; font-weight:600;
-  }
 
   /* selection panel */
   .cart{
@@ -137,7 +119,6 @@
   .totals{margin-top:14px; font-size:0.9rem;}
   .totals .row{display:flex; justify-content:space-between; padding:3px 0;}
   .totals .grand{font-family:'Fraunces', serif; font-size:1.2rem; font-weight:600; border-top:1px solid rgba(255,255,255,0.2); margin-top:8px; padding-top:8px;}
-  .minnote{font-size:0.78rem; color:#c8c1b3; margin-top:6px;}
   .placeorder{
     width:100%; margin-top:14px; padding:13px; border:none; border-radius:5px;
     background:var(--paprika); color:#fff; font-family:'Fraunces', serif; font-weight:600; font-size:1rem;
@@ -202,50 +183,6 @@
     </div>
   </header>
 
-  <div class="notice">
-    <b>How Pre-order works —</b> Retail bags ship from stock on hand. For Sack (1&nbsp;KG) quantities we buy direct from the growers first: orders placed Monday go out for sourcing that week and are parcelled within 5–7 days.
-    <br><span class="flag">Retail stock can run out — Pre-order sacks are always available.</span>
-  </div>
-
-  <section class="catalog">
-    <div class="cat-head">
-      <h2><span class="num">01</span> Bulk Grains &amp; Spices</h2>
-    </div>
-    <p class="cat-sub">Sold by the 100g retail bag.</p>
-    <table>
-      <thead>
-        <tr><th>Item</th><th>Price</th><th></th></tr>
-      </thead>
-      <tbody id="grainsBody"></tbody>
-    </table>
-  </section>
-
-  <section class="catalog">
-    <div class="cat-head">
-      <h2><span class="num">02</span> Specialty Extras</h2>
-    </div>
-    <p class="cat-sub">Unlock up to 10g of extras for every 100g of grains &amp; spices in your selection (e.g. 300g of Turmeric unlocks up to 30g of Saffron, Vanilla Bean, etc).</p>
-    <table>
-      <thead>
-        <tr><th>Item</th><th>Price</th><th></th></tr>
-      </thead>
-      <tbody id="extrasBody"></tbody>
-    </table>
-  </section>
-
-  <section class="catalog">
-    <div class="cat-head">
-      <h2><span class="num">03</span> Bottled Oils</h2>
-    </div>
-    <p class="cat-sub">Bottles are 250ml.</p>
-    <table>
-      <thead>
-        <tr><th>Item</th><th>Price</th><th></th></tr>
-      </thead>
-      <tbody id="oilsBody"></tbody>
-    </table>
-  </section>
-
   <section class="cart">
     <h2>Your Selection</h2>
     <div id="cartItems"><div class="cart-empty">No items selected yet</div></div>
@@ -254,7 +191,6 @@
       <div class="row"><span>Shipping</span><span id="shipping">$12.00</span></div>
       <div class="row grand"><span>Grand Total</span><span id="grandtotal">$0.00</span></div>
     </div>
-    <div class="minnote">Minimum order of $150 (before shipping) required to check out.</div>
     <button class="placeorder" id="placeOrderBtn" disabled>Place Order</button>
   </section>
 
@@ -302,19 +238,7 @@ const GRAINS = [
   {name:"Ceylon Cinnamon", lot:"KS-CI-330", cert:"Lab OK", stock:19, retail:9.10, sack:74.00},
   {name:"Black Peppercorn (ground)", lot:"KS-BP-042", cert:"Lab OK", stock:65, retail:6.80, sack:55.00},
 ];
-const EXTRAS = [
-  {name:"Saffron Threads", lot:"KS-SA-007", cert:"Lab OK", stock:14, retail:18.00},
-  {name:"Vanilla Bean (Madagascar)", lot:"KS-VB-055", cert:"Lab OK", stock:22, retail:12.50},
-  {name:"Pink Peppercorn", lot:"KS-PP-019", cert:"Lab OK", stock:30, retail:8.40},
-];
-const OILS = [
-  {name:"Cold-Pressed Sesame Oil", lot:"KS-OS-410", cert:"Lab OK", stock:26, price:14.00, mark:"S"},
-  {name:"Extra Virgin Olive Oil", lot:"KS-OO-120", cert:"Lab OK", stock:11, price:16.50, mark:"O"},
-  {name:"Toasted Mustard Oil", lot:"KS-OM-233", cert:"Lab OK", stock:3, price:13.00, mark:"M"},
-];
-
 const SHIPPING = 12.00;
-const MIN_ORDER = 150;
 let cart = []; // {key, name, unitLabel, qty, unitPrice, category}
 
 function fmt(n){ return "$" + n.toFixed(2); }
@@ -336,38 +260,6 @@ function renderGrains(){
   }).join('');
 }
 
-function renderExtras(){
-  const body = document.getElementById('extrasBody');
-  body.innerHTML = EXTRAS.map((e, i) => `<tr>
-      <td class="pname">${e.name}</td>
-      <td class="price">${fmt(e.retail)}</td>
-      <td>
-        <div class="qtybox">
-          <input type="number" min="0" max="10" value="1" id="qty-extra-${i}">
-          <button class="addbtn" onclick="addExtra(${i})">Add</button>
-        </div>
-      </td>
-    </tr>`).join('');
-}
-
-function renderOils(){
-  const body = document.getElementById('oilsBody');
-  body.innerHTML = OILS.map((o, i) => `<tr>
-      <td><div class="oil-name"><div class="oil-logo">${o.mark}</div>${o.name}</div></td>
-      <td class="price">${fmt(o.price)}</td>
-      <td>
-        <div class="qtybox">
-          <input type="number" min="0" max="10" value="1" id="qty-oil-${i}">
-          <button class="addbtn" onclick="addOil(${i})">Add</button>
-        </div>
-      </td>
-    </tr>`).join('');
-}
-
-function grainBagsInCart(){
-  return cart.filter(c => c.category === 'grain').reduce((s,c) => s + c.qty, 0);
-}
-
 function addGrain(i){
   const qtyInput = document.getElementById(`qty-grain-${i}`);
   const qty = Math.max(0, Math.min(5, parseInt(qtyInput.value)||0));
@@ -377,39 +269,6 @@ function addGrain(i){
   const existing = cart.find(c => c.key === key);
   if(existing){ existing.qty += qty; } else {
     cart.push({key, name:g.name, unitLabel:'100g bag', qty, unitPrice:g.retail, category:'grain'});
-  }
-  renderCart();
-}
-function addExtra(i){
-  const qtyInput = document.getElementById(`qty-extra-${i}`);
-  const qty = Math.max(0, Math.min(10, parseInt(qtyInput.value)||0));
-  if(qty <= 0) return;
-  const extraGramsRequested = (extrasGramsInCart() + qty*10);
-  const allowed = grainBagsInCart() * 10; // 10g extras per 100g grain bag
-  if(extraGramsRequested > allowed){
-    showToast(`Add more grains & spices first — extras are capped at 10g per 100g purchased.`);
-    return;
-  }
-  const e = EXTRAS[i];
-  const key = 'extra-' + i;
-  const existing = cart.find(c => c.key === key);
-  if(existing){ existing.qty += qty; } else {
-    cart.push({key, name:e.name, unitLabel:'10g unit', qty, unitPrice:e.retail, category:'extra'});
-  }
-  renderCart();
-}
-function extrasGramsInCart(){
-  return cart.filter(c => c.category === 'extra').reduce((s,c) => s + c.qty*10, 0);
-}
-function addOil(i){
-  const qtyInput = document.getElementById(`qty-oil-${i}`);
-  const qty = Math.max(0, Math.min(10, parseInt(qtyInput.value)||0));
-  if(qty <= 0) return;
-  const o = OILS[i];
-  const key = 'oil-' + i;
-  const existing = cart.find(c => c.key === key);
-  if(existing){ existing.qty += qty; } else {
-    cart.push({key, name:o.name, unitLabel:'250ml bottle', qty, unitPrice:o.price, category:'oil'});
   }
   renderCart();
 }
@@ -443,10 +302,8 @@ function renderCart(){
   document.getElementById('grandtotal').textContent = fmt(grand);
 
   const btn = document.getElementById('placeOrderBtn');
-  btn.disabled = subtotal < MIN_ORDER;
-  btn.textContent = subtotal < MIN_ORDER && subtotal > 0
-    ? `Add ${fmt(MIN_ORDER - subtotal)} more to order`
-    : 'Place Order';
+  btn.disabled = subtotal <= 0;
+  btn.textContent = 'Place Order';
 }
 
 function buildSummary(){
@@ -492,8 +349,6 @@ document.getElementById('mailOrder').addEventListener('click', () => {
 });
 
 renderGrains();
-renderExtras();
-renderOils();
 renderCart();
 </script>
 </body>
