@@ -72,27 +72,6 @@
   .notice b{font-family:'Fraunces', serif; font-weight:600;}
   .notice .flag{color:var(--paprika); font-weight:600;}
 
-  .discount-strip{
-    display:flex; gap:10px; flex-wrap:wrap;
-    align-items:center;
-    background:var(--card);
-    border:1px dashed var(--mustard);
-    border-radius:4px;
-    padding:14px 18px;
-    margin-bottom:36px;
-    font-size:0.9rem;
-  }
-  .discount-strip .label{font-family:'Fraunces', serif; font-weight:600; margin-right:6px;}
-  .pill{
-    font-family:'IBM Plex Mono', monospace;
-    font-size:0.78rem;
-    background:var(--mustard);
-    color:#fff;
-    padding:3px 9px;
-    border-radius:20px;
-  }
-  .discount-note{width:100%; color:var(--ink-soft); font-size:0.8rem; margin-top:4px;}
-
   section.catalog{margin-bottom:44px;}
   .cat-head{display:flex; align-items:baseline; justify-content:space-between; gap:12px; margin-bottom:6px; flex-wrap:wrap;}
   h2{
@@ -120,15 +99,6 @@
   tbody tr:hover{background:rgba(138,111,61,0.06);}
   tbody td{padding:12px 10px; vertical-align:middle;}
   .pname{font-weight:600;}
-  .plot{font-family:'IBM Plex Mono', monospace; font-size:0.78rem; color:var(--ink-soft);}
-  .cert{
-    font-family:'IBM Plex Mono', monospace;
-    font-size:0.72rem;
-    color:var(--olive);
-    border:1px solid var(--olive);
-    padding:2px 6px;
-    border-radius:3px;
-  }
   .stock{font-family:'IBM Plex Mono', monospace; font-size:0.82rem;}
   .stock.low{color:var(--paprika);}
   .price{font-family:'IBM Plex Mono', monospace; font-weight:600;}
@@ -237,23 +207,14 @@
     <br><span class="flag">Retail stock can run out — Pre-order sacks are always available.</span>
   </div>
 
-  <div class="discount-strip">
-    <span class="label">Bulk Retail Discount (same item):</span>
-    <span class="pill">200g -5%</span>
-    <span class="pill">300g -10%</span>
-    <span class="pill">400g -15%</span>
-    <span class="pill">500g -20%</span>
-    <div class="discount-note">Applied automatically in your selection, capped at 500g per item. Need more? Order by the Sack instead.</div>
-  </div>
-
   <section class="catalog">
     <div class="cat-head">
       <h2><span class="num">01</span> Bulk Grains &amp; Spices</h2>
     </div>
-    <p class="cat-sub">Sold by the 100g retail bag, or pre-order by the 1KG sack.</p>
+    <p class="cat-sub">Sold by the 100g retail bag.</p>
     <table>
       <thead>
-        <tr><th>Item</th><th>Lot No.</th><th>Cert.</th><th>Stock (100g)</th><th>Retail (100g)</th><th>Sack Pre-order (1kg)</th><th></th></tr>
+        <tr><th>Item</th><th>Price</th><th></th></tr>
       </thead>
       <tbody id="grainsBody"></tbody>
     </table>
@@ -266,7 +227,7 @@
     <p class="cat-sub">Unlock up to 10g of extras for every 100g of grains &amp; spices in your selection (e.g. 300g of Turmeric unlocks up to 30g of Saffron, Vanilla Bean, etc).</p>
     <table>
       <thead>
-        <tr><th>Item</th><th>Lot No.</th><th>Cert.</th><th>Stock (10g)</th><th>Retail (10g)</th><th></th></tr>
+        <tr><th>Item</th><th>Price</th><th></th></tr>
       </thead>
       <tbody id="extrasBody"></tbody>
     </table>
@@ -276,10 +237,10 @@
     <div class="cat-head">
       <h2><span class="num">03</span> Bottled Oils</h2>
     </div>
-    <p class="cat-sub">⚠️ Bottles are 250ml, not 100ml — priced per bottle below, with the per-100ml rate shown for comparison.</p>
+    <p class="cat-sub">Bottles are 250ml.</p>
     <table>
       <thead>
-        <tr><th>Item</th><th>Lot No.</th><th>Cert.</th><th>Stock (250ml)</th><th>Price (250ml)</th><th>Per 100ml</th><th></th></tr>
+        <tr><th>Item</th><th>Price</th><th></th></tr>
       </thead>
       <tbody id="oilsBody"></tbody>
     </table>
@@ -335,38 +296,36 @@
 
 <script>
 const GRAINS = [
-  {name:"Turmeric Powder", retail:6.50},
-  {name:"Smoked Paprika", retail:7.20},
-  {name:"Ground Cumin", retail:5.90},
-  {name:"Ceylon Cinnamon", retail:9.10},
-  {name:"Black Peppercorn", retail:6.80},
+  {name:"Turmeric Powder", lot:"KS-TU-114", cert:"Lab OK", stock:42, retail:6.50, sack:52.00},
+  {name:"Smoked Paprika", lot:"KS-PA-098", cert:"Lab OK", stock:8, retail:7.20, sack:58.00},
+  {name:"Ground Cumin", lot:"KS-CU-201", cert:"Lab OK", stock:0, retail:5.90, sack:47.00},
+  {name:"Ceylon Cinnamon", lot:"KS-CI-330", cert:"Lab OK", stock:19, retail:9.10, sack:74.00},
+  {name:"Black Peppercorn (ground)", lot:"KS-BP-042", cert:"Lab OK", stock:65, retail:6.80, sack:55.00},
+];
+const EXTRAS = [
+  {name:"Saffron Threads", lot:"KS-SA-007", cert:"Lab OK", stock:14, retail:18.00},
+  {name:"Vanilla Bean (Madagascar)", lot:"KS-VB-055", cert:"Lab OK", stock:22, retail:12.50},
+  {name:"Pink Peppercorn", lot:"KS-PP-019", cert:"Lab OK", stock:30, retail:8.40},
+];
+const OILS = [
+  {name:"Cold-Pressed Sesame Oil", lot:"KS-OS-410", cert:"Lab OK", stock:26, price:14.00, mark:"S"},
+  {name:"Extra Virgin Olive Oil", lot:"KS-OO-120", cert:"Lab OK", stock:11, price:16.50, mark:"O"},
+  {name:"Toasted Mustard Oil", lot:"KS-OM-233", cert:"Lab OK", stock:3, price:13.00, mark:"M"},
 ];
 
+const SHIPPING = 12.00;
+const MIN_ORDER = 150;
 let cart = []; // {key, name, unitLabel, qty, unitPrice, category}
 
 function fmt(n){ return "$" + n.toFixed(2); }
-
-function bulkMultiplier(qtyBags){
-  // qtyBags in units of 100g bags; discount tiers at 200/300/400/500g total for same item
-  const grams = qtyBags * 100;
-  if(grams >= 500) return 0.80;
-  if(grams >= 400) return 0.85;
-  if(grams >= 300) return 0.90;
-  if(grams >= 200) return 0.95;
-  return 1.0;
-}
 
 function renderGrains(){
   const body = document.getElementById('grainsBody');
   body.innerHTML = GRAINS.map((g, i) => {
     const outOfStock = g.stock <= 0;
     return `<tr>
-      <td class="pname">${g.name}</td>
-      <td class="plot">${g.lot}</td>
-      <td><span class="cert">${g.cert}</span></td>
-      <td class="stock ${g.stock < 15 && !outOfStock ? 'low':''}">${outOfStock ? 'Out of stock' : g.stock + ' bags'}</td>
+      <td class="pname">${g.name}${outOfStock ? ' <span class="stock low">(Out of stock)</span>' : ''}</td>
       <td class="price">${fmt(g.retail)}</td>
-      <td class="price">${fmt(g.sack)} /kg</td>
       <td>
         <div class="qtybox">
           <input type="number" min="0" max="5" value="1" id="qty-grain-${i}" ${outOfStock?'disabled':''}>
@@ -381,9 +340,6 @@ function renderExtras(){
   const body = document.getElementById('extrasBody');
   body.innerHTML = EXTRAS.map((e, i) => `<tr>
       <td class="pname">${e.name}</td>
-      <td class="plot">${e.lot}</td>
-      <td><span class="cert">${e.cert}</span></td>
-      <td class="stock">${e.stock} units</td>
       <td class="price">${fmt(e.retail)}</td>
       <td>
         <div class="qtybox">
@@ -398,11 +354,7 @@ function renderOils(){
   const body = document.getElementById('oilsBody');
   body.innerHTML = OILS.map((o, i) => `<tr>
       <td><div class="oil-name"><div class="oil-logo">${o.mark}</div>${o.name}</div></td>
-      <td class="plot">${o.lot}</td>
-      <td><span class="cert">${o.cert}</span></td>
-      <td class="stock">${o.stock} bottles</td>
       <td class="price">${fmt(o.price)}</td>
-      <td class="price">${fmt(o.price/2.5)}</td>
       <td>
         <div class="qtybox">
           <input type="number" min="0" max="10" value="1" id="qty-oil-${i}">
@@ -473,12 +425,7 @@ function renderCart(){
     container.innerHTML = '<div class="cart-empty">No items selected yet</div>';
   } else {
     container.innerHTML = cart.map(c => {
-      let lineTotal;
-      if(c.category === 'grain'){
-        lineTotal = c.qty * c.unitPrice * bulkMultiplier(c.qty);
-      } else {
-        lineTotal = c.qty * c.unitPrice;
-      }
+      const lineTotal = c.qty * c.unitPrice;
       return `<div class="cart-item">
         <span>${c.qty} × ${c.name} (${c.unitLabel})</span>
         <span>${fmt(lineTotal)} <span class="rm" onclick="removeItem('${c.key}')">remove</span></span>
@@ -488,11 +435,7 @@ function renderCart(){
 
   let subtotal = 0;
   cart.forEach(c => {
-    if(c.category === 'grain'){
-      subtotal += c.qty * c.unitPrice * bulkMultiplier(c.qty);
-    } else {
-      subtotal += c.qty * c.unitPrice;
-    }
+    subtotal += c.qty * c.unitPrice;
   });
   const grand = subtotal > 0 ? subtotal + SHIPPING : 0;
   document.getElementById('subtotal').textContent = fmt(subtotal);
@@ -512,10 +455,10 @@ function buildSummary(){
   const network = document.querySelector('input[name="network"]:checked').value;
   let lines = [`Kettle & Sack — Order Summary`, `Name: ${name}`, `Address: ${address}`, `Pay via: ${network}`, ``];
   cart.forEach(c => {
-    let lineTotal = c.category === 'grain' ? c.qty*c.unitPrice*bulkMultiplier(c.qty) : c.qty*c.unitPrice;
+    const lineTotal = c.qty * c.unitPrice;
     lines.push(`${c.qty} x ${c.name} (${c.unitLabel}) — ${fmt(lineTotal)}`);
   });
-  const subtotal = cart.reduce((s,c) => s + (c.category==='grain' ? c.qty*c.unitPrice*bulkMultiplier(c.qty) : c.qty*c.unitPrice), 0);
+  const subtotal = cart.reduce((s,c) => s + c.qty*c.unitPrice, 0);
   lines.push('', `Subtotal: ${fmt(subtotal)}`, `Shipping: ${fmt(SHIPPING)}`, `Total: ${fmt(subtotal+SHIPPING)}`);
   return lines.join('\n');
 }
