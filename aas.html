@@ -96,20 +96,17 @@
 
 <script>
 const OILS = [
-  {name:"Test C 250mg/ml", retail:6.90},
-  {name:"Test E 300mg/ml", retail:11.50},
-  {name:"Primobolam 200mg/ml", retail:7.40},
-  {name:"EQ 250mg/ml", retail:8.20},
-  {name:"Tren A 100mg/ml", retail:8.20},
-  {name:"Tren E 200mg/ml", retail:8.20},
-  {name:"", retail:8.20},
+  {name:"Test C 250mg/ml", retail:40.00},
+  {name:"Test E 300mg/ml", retail:40.00},
+  {name:"Primobolam 200mg/ml", retail:170.00},
+  {name:"EQ 250mg/ml", retail:40.00},
+  {name:"Tren A 100mg/ml", retail:40.00},
+  {name:"Tren E 200mg/ml", retail:50.00},
 ];
 const ORALS = [
-  {name:"Cast Iron Skillet (10in)", stock:9, retail:34.00},
-  {name:"Bamboo Cutting Board", stock:22, retail:19.50},
-  {name:"Stainless Mixing Bowl Set", stock:14, retail:28.00},
-  {name:"Ceramic Spice Jars (Set of 6)", stock:0, retail:24.00},
-  {name:"Wooden Spoon Set", stock:33, retail:12.00},
+  {name:"Anavar 70mg 50 Pills", retail:140.00},
+  {name:"Anadrol 50mg 100 Pills", retail:80.00},
+  {name:"Winstrol 50mg", retail:110.00},
 ];
 let cart = []; // {key, name, unitLabel, qty, unitPrice, category}
 
@@ -133,13 +130,13 @@ function renderTable(items, bodyId, keyPrefix){
 }
 
 function renderSpices(){ renderTable(OILS, 'spicesBody', 'spice'); }
-function renderSupplies(){ renderTable(SUPPLIES, 'suppliesBody', 'supply'); }
+function renderSupplies(){ renderTable(ORALS, 'suppliesBody', 'supply'); }
 
 function addItem(keyPrefix, i){
   const qtyInput = document.getElementById(`qty-${keyPrefix}-${i}`);
   const qty = Math.max(0, parseInt(qtyInput.value)||0);
   if(qty <= 0) return;
-  const source = keyPrefix === 'spice' ? OILS : SUPPLIES;
+  const source = keyPrefix === 'spice' ? OILS : ORALS;
   const it = source[i];
   const key = keyPrefix + '-' + i;
   const existing = cart.find(c => c.key === key);
