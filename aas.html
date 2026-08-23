@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AAS — Spices &amp; Kitchen Supplies</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="wrap">
+
+  <nav class="sitenav">
+    <a href="index.html">Divinities</a>
+    <a href="aas.html" class="active">AAS</a>
+  </nav>
+
+  <header class="top">
+    <div class="brandrow">
+      <div>
+        <h1>AAS</h1>
+        <div class="tagline">A second line of spices and everyday kitchen supplies, sold alongside Divinities.</div>
+      </div>
+      <div class="stamp">manifest no. 0418</div>
+    </div>
+  </header>
+
+  <section class="catalog">
+    <div class="cat-head">
+      <h2><span class="num">01</span> Spices</h2>
+    </div>
+    <table>
+      <thead>
+        <tr><th>Item</th><th>Price</th><th></th></tr>
+      </thead>
+      <tbody id="spicesBody"></tbody>
+    </table>
+  </section>
+
+  <section class="catalog">
+    <div class="cat-head">
+      <h2><span class="num">02</span> Kitchen Supplies</h2>
+    </div>
+    <table>
+      <thead>
+        <tr><th>Item</th><th>Price</th><th></th></tr>
+      </thead>
+      <tbody id="suppliesBody"></tbody>
+    </table>
+  </section>
+
+  <section class="cart">
+    <h2>Your Selection</h2>
+    <div id="cartItems"><div class="cart-empty">No items selected yet</div></div>
+    <div class="totals">
+      <div class="row"><span>Subtotal</span><span id="subtotal">$0.00</span></div>
+      <div class="row"><span>Shipping</span><span id="shipping">$12.00</span></div>
+      <div class="row grand"><span>Grand Total</span><span id="grandtotal">$0.00</span></div>
+    </div>
+    <button class="placeorder" id="placeOrderBtn" disabled>Place Order</button>
+  </section>
+
+  <footer>AAS — small-batch sourcing, honestly labelled.</footer>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <span class="close" id="closeModal">&times;</span>
+    <h3>Complete Your Order</h3>
+    <div class="small">Send your order to <b>orders@divinities.example</b></div>
+
+    <label>Name</label>
+    <input type="text" id="ordName" placeholder="Full name">
+    <label>Shipping Address</label>
+    <input type="text" id="ordAddress" placeholder="Street, city, postal code">
+    <div class="small">* Enter your real name and address — parcels can't be redelivered.</div>
+
+    <label>Pay with</label>
+    <div class="network-opts">
+      <label><input type="radio" name="network" value="USDT (TRC20)" checked> USDT · TRC20</label>
+      <label><input type="radio" name="network" value="USDT (ERC20)"> USDT · ERC20</label>
+      <label><input type="radio" name="network" value="BTC"> BTC</label>
+      <label><input type="radio" name="network" value="Other (ask)"> Other</label>
+    </div>
+    <div class="small">A payment address will be sent to you within 12 hours of your order.</div>
+
+    <label>Order Summary</label>
+    <div class="summary-box" id="orderSummary"></div>
+
+    <div class="modal-actions">
+      <button class="btn-copy" id="copyDetails">Copy Order Details</button>
+      <button class="btn-mail" id="mailOrder">Open Email</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const SPICES = [
+  {name:"Smoked Chipotle Powder", stock:30, retail:6.90},
+  {name:"Whole Green Cardamom", stock:12, retail:11.50},
+  {name:"Sumac", stock:24, retail:7.40},
+  {name:"Za'atar Blend", stock:18, retail:8.20},
+];
+const SUPPLIES = [
+  {name:"Cast Iron Skillet (10in)", stock:9, retail:34.00},
+  {name:"Bamboo Cutting Board", stock:22, retail:19.50},
+  {name:"Stainless Mixing Bowl Set", stock:14, retail:28.00},
+  {name:"Ceramic Spice Jars (Set of 6)", stock:0, retail:24.00},
+  {name:"Wooden Spoon Set", stock:33, retail:12.00},
+];
+const SHIPPING = 12.00;
+let cart = []; // {key, name, unitLabel, qty, unitPrice, category}
+
+function fmt(n){ return "$" + n.toFixed(2); }
+
+function renderTable(items, bodyId, keyPrefix){
+  const body = document.getElementById(bodyId);
+  body.innerHTML = items.map((it, i) => {
+    const outOfStock = it.stock <= 0;
+    return `<tr>
+      <td class="pname">${it.name}${outOfStock ? ' <span class="stock low">(Out of stock)</span>' : ''}</td>
+      <td class="price">${fmt(it.retail)}</td>
+      <td>
+        <div class="qtybox">
+          <input type="number" min="0" value="1" id="qty-${keyPrefix}-${i}" ${outOfStock?'disabled':''}>
+          <button class="addbtn" ${outOfStock?'disabled':''} onclick="addItem('${keyPrefix}', ${i})">Add</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function renderSpices(){ renderTable(SPICES, 'spicesBody', 'spice'); }
+function renderSupplies(){ renderTable(SUPPLIES, 'suppliesBody', 'supply'); }
+
+function addItem(keyPrefix, i){
+  const qtyInput = document.getElementById(`qty-${keyPrefix}-${i}`);
+  const qty = Math.max(0, parseInt(qtyInput.value)||0);
+  if(qty <= 0) return;
+  const source = keyPrefix === 'spice' ? SPICES : SUPPLIES;
+  const it = source[i];
+  const key = keyPrefix + '-' + i;
+  const existing = cart.find(c => c.key === key);
+  if(existing){ existing.qty += qty; } else {
+    cart.push({key, name:it.name, unitLabel:'unit', qty, unitPrice:it.retail, category:keyPrefix});
+  }
+  renderCart();
+}
+
+function removeItem(key){
+  cart = cart.filter(c => c.key !== key);
+  renderCart();
+}
+
+function renderCart(){
+  const container = document.getElementById('cartItems');
+  if(cart.length === 0){
+    container.innerHTML = '<div class="cart-empty">No items selected yet</div>';
+  } else {
+    container.innerHTML = cart.map(c => {
+      const lineTotal = c.qty * c.unitPrice;
+      return `<div class="cart-item">
+        <span>${c.qty} × ${c.name}</span>
+        <span>${fmt(lineTotal)} <span class="rm" onclick="removeItem('${c.key}')">remove</span></span>
+      </div>`;
+    }).join('');
+  }
+
+  let subtotal = 0;
+  cart.forEach(c => {
+    subtotal += c.qty * c.unitPrice;
+  });
+  const grand = subtotal > 0 ? subtotal + SHIPPING : 0;
+  document.getElementById('subtotal').textContent = fmt(subtotal);
+  document.getElementById('shipping').textContent = subtotal > 0 ? fmt(SHIPPING) : '$0.00';
+  document.getElementById('grandtotal').textContent = fmt(grand);
+
+  const btn = document.getElementById('placeOrderBtn');
+  btn.disabled = subtotal <= 0;
+  btn.textContent = 'Place Order';
+}
+
+function buildSummary(){
+  const name = document.getElementById('ordName').value || '(name not entered)';
+  const address = document.getElementById('ordAddress').value || '(address not entered)';
+  const network = document.querySelector('input[name="network"]:checked').value;
+  let lines = [`AAS — Order Summary`, `Name: ${name}`, `Address: ${address}`, `Pay via: ${network}`, ``];
+  cart.forEach(c => {
+    const lineTotal = c.qty * c.unitPrice;
+    lines.push(`${c.qty} x ${c.name} — ${fmt(lineTotal)}`);
+  });
+  const subtotal = cart.reduce((s,c) => s + c.qty*c.unitPrice, 0);
+  lines.push('', `Subtotal: ${fmt(subtotal)}`, `Shipping: ${fmt(SHIPPING)}`, `Total: ${fmt(subtotal+SHIPPING)}`);
+  return lines.join('\n');
+}
+
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2600);
+}
+
+document.getElementById('placeOrderBtn').addEventListener('click', () => {
+  document.getElementById('orderSummary').textContent = buildSummary();
+  document.getElementById('overlay').classList.add('open');
+});
+document.getElementById('closeModal').addEventListener('click', () => {
+  document.getElementById('overlay').classList.remove('open');
+});
+document.querySelectorAll('input[name="network"], #ordName, #ordAddress').forEach(el => {
+  el.addEventListener('input', () => {
+    document.getElementById('orderSummary').textContent = buildSummary();
+  });
+});
+document.getElementById('copyDetails').addEventListener('click', () => {
+  const text = buildSummary();
+  navigator.clipboard.writeText(text).then(() => showToast('Order details copied'));
+});
+document.getElementById('mailOrder').addEventListener('click', () => {
+  const body = encodeURIComponent(buildSummary());
+  window.location.href = `mailto:orders@divinities.example?subject=New Order&body=${body}`;
+});
+
+renderSpices();
+renderSupplies();
+renderCart();
+</script>
+</body>
+</html>
