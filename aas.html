@@ -7,8 +7,39 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
+  <style>
+  #pwGate{
+    display:none; position:fixed; inset:0; z-index:200;
+    background:var(--parchment); align-items:center; justify-content:center; padding:20px;
+  }
+  body.gate-locked > *:not(#pwGate){ display:none !important; }
+  body.gate-locked #pwGate{ display:flex; }
+  .pwbox{
+    background:var(--card); border:1px solid var(--line); border-radius:8px;
+    padding:32px; max-width:360px; width:100%; text-align:center;
+  }
+  .pwbox h3{font-family:'Fraunces', serif; margin:0 0 8px;}
+  .pwbox p{color:var(--ink-soft); font-size:0.85rem; margin:0 0 16px;}
+  .pwbox input{
+    width:100%; padding:10px; border:1px solid var(--line); border-radius:4px;
+    font-family:'Inter'; margin-bottom:10px; box-sizing:border-box;
+  }
+  .pwbox button{
+    width:100%; padding:11px; border:none; border-radius:5px;
+    background:var(--ink); color:#fff; font-weight:600; cursor:pointer; font-family:'Inter';
+  }
+  .pwerror{color:var(--paprika); font-size:0.8rem; margin-top:10px; display:none;}
+</style>
 </head>
-<body>
+<body class="gate-locked">
+  <div id="pwGate">
+  <div class="pwbox">
+    <h3>Access</h3>
+    <input type="password" id="pwInput" placeholder="Access code">
+    <button id="pwSubmit">Enter</button>
+    <div class="pwerror" id="pwError">Incorrect code — try again.</div>
+  </div>
+</div>
 <div class="wrap">
 
   <nav class="sitenav">
@@ -221,6 +252,29 @@ document.getElementById('mailOrder').addEventListener('click', () => {
 renderSpices();
 renderSupplies();
 renderCart();
+</script>
+  <script>
+  const WHOLESALE_CODE = "AAS"; // <-- change this to your own access code
+
+  function unlockGate(){
+    document.body.classList.remove('gate-locked');
+  }
+  if(sessionStorage.getItem('aasUnlocked') === 'yes'){
+    unlockGate();
+  }
+  document.getElementById('pwSubmit').addEventListener('click', attemptUnlock);
+  document.getElementById('pwInput').addEventListener('keydown', function(e){
+    if(e.key === 'Enter') attemptUnlock();
+  });
+  function attemptUnlock(){
+    const val = document.getElementById('pwInput').value;
+    if(val === WHOLESALE_CODE){
+      sessionStorage.setItem('aasUnlocked', 'yes');
+      unlockGate();
+    } else {
+      document.getElementById('pwError').style.display = 'block';
+    }
+  }
 </script>
 </body>
 </html>
