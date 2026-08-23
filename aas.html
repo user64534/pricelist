@@ -55,7 +55,6 @@
     <div id="cartItems"><div class="cart-empty">No items selected yet</div></div>
     <div class="totals">
       <div class="row"><span>Subtotal</span><span id="subtotal">$0.00</span></div>
-      <div class="row"><span>Shipping</span><span id="shipping">$12.00</span></div>
       <div class="row grand"><span>Grand Total</span><span id="grandtotal">$0.00</span></div>
     </div>
     <button class="placeorder" id="placeOrderBtn" disabled>Place Order</button>
@@ -72,9 +71,7 @@
 
     <label>Name</label>
     <input type="text" id="ordName" placeholder="Full name">
-    <label>Shipping Address</label>
-    <input type="text" id="ordAddress" placeholder="Street, city, postal code">
-    <div class="small">* Enter your real name and address — parcels can't be redelivered.</div>
+    <div class="small">* Enter your real name — orders can't be reissued.</div>
 
     <label>Pay with</label>
     <div class="network-opts">
@@ -111,7 +108,6 @@ const SUPPLIES = [
   {name:"Ceramic Spice Jars (Set of 6)", stock:0, retail:24.00},
   {name:"Wooden Spoon Set", stock:33, retail:12.00},
 ];
-const SHIPPING = 12.00;
 let cart = []; // {key, name, unitLabel, qty, unitPrice, category}
 
 function fmt(n){ return "$" + n.toFixed(2); }
@@ -173,10 +169,8 @@ function renderCart(){
   cart.forEach(c => {
     subtotal += c.qty * c.unitPrice;
   });
-  const grand = subtotal > 0 ? subtotal + SHIPPING : 0;
   document.getElementById('subtotal').textContent = fmt(subtotal);
-  document.getElementById('shipping').textContent = subtotal > 0 ? fmt(SHIPPING) : '$0.00';
-  document.getElementById('grandtotal').textContent = fmt(grand);
+  document.getElementById('grandtotal').textContent = fmt(subtotal);
 
   const btn = document.getElementById('placeOrderBtn');
   btn.disabled = subtotal <= 0;
@@ -185,15 +179,14 @@ function renderCart(){
 
 function buildSummary(){
   const name = document.getElementById('ordName').value || '(name not entered)';
-  const address = document.getElementById('ordAddress').value || '(address not entered)';
   const network = document.querySelector('input[name="network"]:checked').value;
-  let lines = [`AAS — Order Summary`, `Name: ${name}`, `Address: ${address}`, `Pay via: ${network}`, ``];
+  let lines = [`AAS — Order Summary`, `Name: ${name}`, `Pay via: ${network}`, ``];
   cart.forEach(c => {
     const lineTotal = c.qty * c.unitPrice;
     lines.push(`${c.qty} x ${c.name} — ${fmt(lineTotal)}`);
   });
   const subtotal = cart.reduce((s,c) => s + c.qty*c.unitPrice, 0);
-  lines.push('', `Subtotal: ${fmt(subtotal)}`, `Shipping: ${fmt(SHIPPING)}`, `Total: ${fmt(subtotal+SHIPPING)}`);
+  lines.push('', `Total: ${fmt(subtotal)}`);
   return lines.join('\n');
 }
 
@@ -211,7 +204,7 @@ document.getElementById('placeOrderBtn').addEventListener('click', () => {
 document.getElementById('closeModal').addEventListener('click', () => {
   document.getElementById('overlay').classList.remove('open');
 });
-document.querySelectorAll('input[name="network"], #ordName, #ordAddress').forEach(el => {
+document.querySelectorAll('input[name="network"], #ordName').forEach(el => {
   el.addEventListener('input', () => {
     document.getElementById('orderSummary').textContent = buildSummary();
   });
